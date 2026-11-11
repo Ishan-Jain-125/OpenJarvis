@@ -7,22 +7,18 @@ services:
     region: oregon
     dockerfilePath: ./deploy/docker/Dockerfile
     dockerContext: .
-    dockerCommand: serve --host 0.0.0.0 --port 10000 --engine vllm --model auto
     healthCheckPath: /health
     autoDeploy: true
-
     envVars:
       - key: PORT
         value: "10000"
-
       - key: OPENJARVIS_API_KEY
         generateValue: true
-
-      - key: VLLM_HOST
+      - key: FREELLMAPI_BASE_URL
         value: https://freellmapi-sjjq.onrender.com
-
-      - key: VLLM_API_KEY
+      - key: FREELLMAPI_API_KEY
         sync: false
-
+      - key: JARVIS_MODEL
+        value: auto
       - key: OPENJARVIS_HOME
         value: /home/openjarvis/.openjarvis
