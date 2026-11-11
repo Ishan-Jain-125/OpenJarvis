@@ -68,7 +68,7 @@ FROM python:3.12.13-slim-bookworm@sha256:76d4b7b6305788c6b4c6a19d6a22a3921bf802e
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /app /app
 WORKDIR /app
-
+COPY render_adapter.py /app/render_adapter.py
 # Run as an unprivileged user — the server needs no root privileges, so dropping
 # them limits the blast radius of a compromise (#565). The app writes only to
 # $HOME (config/cache/state), which is owned by this user.
@@ -78,10 +78,12 @@ RUN groupadd --system --gid 10001 openjarvis && \
 ENV HOME=/home/openjarvis
 USER openjarvis
 
-EXPOSE 8000
+
 
 # Keep `jarvis` as the image entrypoint so Docker and Compose command overrides
 # remain subcommands (for example, `docker run IMAGE serve ...`). Platforms
 # such as Render replace CMD while preserving this entrypoint.
-ENTRYPOINT ["jarvis"]
-CMD ["serve", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 10000
+
+ENTRYPOINT ["python", "-m", "uvicorn"]
+CMD ["render_adapter:app", "--host", "0.0.0.0", "--port", "10000"]
