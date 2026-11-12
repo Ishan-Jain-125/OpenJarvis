@@ -24,6 +24,20 @@ engine = OpenAICompatEngine(
     timeout=600.0,
 )
 
+# Deployment compatibility workaround:
+# Ignore an empty streaming chunk from OpenAI-compatible providers.
+_original_stream = engine.stream
+
+async def _safe_stream(*args, **kwargs):
+    try:
+        async for token in _original_stream(*args, **kwargs):
+            yield token
+    except IndexError as exc:
+        if str(exc) != "list index out of range":
+            raise
+
+engine.stream = _safe_stream
+
 cors_raw = os.getenv("OPENJARVIS_CORS_ORIGINS", "").strip()
 cors_origins = (
     [x.strip() for x in cors_raw.split(",") if x.strip()]
