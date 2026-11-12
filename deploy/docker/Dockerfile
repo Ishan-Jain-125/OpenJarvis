@@ -68,7 +68,7 @@ FROM python:3.12.13-slim-bookworm@sha256:76d4b7b6305788c6b4c6a19d6a22a3921bf802e
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /app /app
 WORKDIR /app
-COPY render_adapter.py /app/render_adapter.py
+COPY render_entrypoint.py /app/render_entrypoint.py
 # Run as an unprivileged user — the server needs no root privileges, so dropping
 # them limits the blast radius of a compromise (#565). The app writes only to
 # $HOME (config/cache/state), which is owned by this user.
@@ -86,4 +86,4 @@ USER openjarvis
 EXPOSE 10000
 
 ENTRYPOINT ["python", "-m", "uvicorn"]
-CMD ["render_adapter:app", "--host", "0.0.0.0", "--port", "10000"]
+CMD ["render_entrypoint:app", "--host", "0.0.0.0", "--port", "10000"]
