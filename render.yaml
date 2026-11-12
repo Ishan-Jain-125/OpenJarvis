@@ -22,3 +22,4 @@ services:
         value: auto
       - key: OPENJARVIS_HOME
         value: /home/openjarvis/.openjarvis
+        
